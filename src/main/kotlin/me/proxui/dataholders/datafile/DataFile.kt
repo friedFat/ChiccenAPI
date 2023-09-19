@@ -23,11 +23,11 @@ class DataFile(plugin: Plugin, val name: String) : DataHolder {
     }
 
     private val file = File(plugin.dataFolder, "$name.json")
-    private var tempStorage: SortedMap<String, Any>
+    private lateinit var tempStorage: SortedMap<String, Any>
 
     init {
         file.createIfNotExists()
-        tempStorage = loadTempStorage()
+        reload()
         REGISTERED_DATA_FILES.add(this)
 
         listen<PluginDisableEvent> { e ->
