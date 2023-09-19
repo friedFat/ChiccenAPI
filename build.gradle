@@ -1,0 +1,43 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+    id 'io.papermc.paperweight.userdev' version '1.5.5'
+}
+
+group = 'me.proxui'
+version = '0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://mvn.lumine.io/repository/maven-public/'
+    }
+}
+
+dependencies {
+    paperweight.paperDevBundle '1.20.1-R0.1-SNAPSHOT'
+    implementation 'net.axay:kspigot:1.20.1'
+
+    // https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
+    implementation 'org.mongodb:mongo-java-driver:3.12.14'
+
+    // https://mvnrepository.com/artifact/com.comphenix.protocol/ProtocolLib
+    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+
+tasks {
+    compileJava {
+        options.release.set(17)
+    }
+    compileKotlin {
+        kotlinOptions.jvmTarget = "17"
+    }
+}
