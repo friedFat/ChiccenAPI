@@ -1,16 +1,17 @@
 package me.proxui.structure
 
 import me.proxui.dataholders.DataHolder
+import me.proxui.dataholders.database.DatabaseConfigurator
+import me.proxui.dataholders.database.IDatabase
+import me.proxui.dataholders.database.impl.Database
 import me.proxui.dataholders.datafile.DataFile
-import me.proxui.dataholders.database.impl.DataCollection
 import me.proxui.player.PlayerDeafening
 import net.axay.kspigot.main.KSpigot
-import org.bukkit.Bukkit
 
 val chiccenAPI by lazy { ChiccenAPI.INSTANCE }
 val dataFile: DataHolder by lazy { DataFile(chiccenAPI, "data") }
-val database: DataHolder by lazy { DataCollection("playerStyling") }
-val remoteDataFile: DataHolder by lazy { DataCollection("data", "data") }
+val configFile: DataHolder by lazy { DataFile(chiccenAPI, "configs") }
+val database: IDatabase by lazy { Database(chiccenAPI.dbConfigs,"data") }
 
 class ChiccenAPI : KSpigot() {
 
@@ -51,13 +52,23 @@ class ChiccenAPI : KSpigot() {
         internal lateinit var INSTANCE: ChiccenAPI
     }
 
+    /**
+     * database configurations
+     */
+    val dbConfigs by lazy {
+        object: DatabaseConfigurator {
+            override val host by lazy { configFile.getOrSet("host", "host-ip") }
+            override val port by lazy { configFile.getOrSet("port", 27017) }
+        }
+    }
+
+
     init {
         INSTANCE = this
     }
 
     override fun load() {
         logger.info("Loading plugin")
-        Bukkit.getWorld("asd")
     }
 
     override fun startup() {

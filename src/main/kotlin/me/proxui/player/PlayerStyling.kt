@@ -3,7 +3,7 @@ package me.proxui.player
 import me.proxui.structure.database
 import org.bukkit.entity.Player
 
-private val playerStylingRegistry = database.getOrSet<MutableMap<String, PlayerStyling>>("playerStyling", mutableMapOf())
+private val playerStylingRegistry = database.getCollection("playerStyling").getOrSet("playerStyling") { mutableMapOf<String, PlayerStyling>() }
 val Player.styling; get() = playerStylingRegistry[this.uniqueId.toString()] ?: {
     PlayerStyling().also {
         playerStylingRegistry[this.uniqueId.toString()] = it

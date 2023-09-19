@@ -8,15 +8,9 @@ import me.proxui.dataholders.database.IDataCollection
 import me.proxui.utils.logger
 import org.bson.Document
 
-interface DatabaseInfo {
-    val host: String
-    val port: Int
-}
-
 
 @Suppress("UNCHECKED_CAST")
-open class DataCollection(val name: String, private val connection: MongoClient, private val database: MongoDatabase) :
-    IDataCollection {
+open class DataCollection(val name: String, private val connection: MongoClient, private val database: MongoDatabase) : IDataCollection {
 
     companion object {
         private val gsonObject by lazy { Gson() }
@@ -46,11 +40,11 @@ open class DataCollection(val name: String, private val connection: MongoClient,
         else content[key] = any
     }
 
-    override fun save() {
+    final override fun save() {
         collection.insertOne(Document.parse(gsonObject.toJson(content)))
     }
 
-    override fun reload() {
+    final override fun reload() {
         content = collection.find(MutableMap::class.java).first() as MutableMap<String, Any>? ?: mutableMapOf()
     }
 
