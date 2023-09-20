@@ -5,7 +5,7 @@ import me.proxui.dataholders.database.DatabaseConfiguration
 import me.proxui.dataholders.database.IDatabase
 import me.proxui.dataholders.database.impl.Database
 import me.proxui.dataholders.datafile.DataFile
-import me.proxui.player.PlayerDeafening
+import me.proxui.utils.PlayerDeafening
 import net.axay.kspigot.main.KSpigot
 
 val chiccenAPI by lazy { ChiccenAPI.INSTANCE }

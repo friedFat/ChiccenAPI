@@ -19,7 +19,7 @@ fun Logger.debug(msg: String) {
     @Suppress("DEPRECATION")
     this.info(ChatColor.stripColor(msg))
     debugging.forEach {
-        (Bukkit.getPlayer(it) ?: return@forEach).sendMessage(msg)
+        (Bukkit.getPlayer(it) ?: return@forEach).sendMessage("§8Debug -> $msg")
     }
 }
 

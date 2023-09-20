@@ -4,7 +4,7 @@ import me.proxui.structure.ChiccenAPI
 import net.axay.kspigot.extensions.bukkit.plainText
 import org.bukkit.Bukkit
 
-private val messages by lazy { object: Messages{
+private val messages by lazy { object: Messages {
     override val noPermissionMsg = Bukkit.permissionMessage().plainText()
 }}
 
