@@ -37,19 +37,16 @@ class DataFile(plugin: Plugin, val name: String) : DataHolder {
     }
 
     override operator fun set(key: String, any: Any?) {
-        if(any == null) tempStorage.remove(key)
+        if (any == null) tempStorage.remove(key)
         else tempStorage[key] = any
     }
 
     override fun <T> get(key: String): T? {
-        if (tempStorage.containsKey(key)) {
-            try {
-                @Suppress("UNCHECKED_CAST")
-                return tempStorage[key] as T
-            } catch (ex: ClassCastException) {
-                logger.severe("Wrong type was found while retrieving data in the temp storage for $name.json: $ex")
-            }
-            return null
+        try {
+            @Suppress("UNCHECKED_CAST")
+            return tempStorage[key] as T?
+        } catch (ex: ClassCastException) {
+            logger.severe("Wrong type was found while retrieving data in the temp storage for $name.json: $ex")
         }
         return null
     }
@@ -65,8 +62,7 @@ class DataFile(plugin: Plugin, val name: String) : DataHolder {
     }
 
     override fun reload() {
-        tempStorage = loadTempStorage()
+        tempStorage = (gsonObject.fromJson<Map<String, Any>?>(FileReader(file), Map::class.java) ?: mapOf())
+            .toSortedMap(String.CASE_INSENSITIVE_ORDER)
     }
-
-    private fun loadTempStorage() = gsonObject.fromJson<Map<String, Any>>(FileReader(file), Map::class.java).toSortedMap(String.CASE_INSENSITIVE_ORDER)
 }

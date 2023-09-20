@@ -1,7 +1,7 @@
 package me.proxui.structure
 
 import me.proxui.dataholders.DataHolder
-import me.proxui.dataholders.database.DatabaseConfigurator
+import me.proxui.dataholders.database.DatabaseConfiguration
 import me.proxui.dataholders.database.IDatabase
 import me.proxui.dataholders.database.impl.Database
 import me.proxui.dataholders.datafile.DataFile
@@ -45,7 +45,8 @@ class ChiccenAPI : KSpigot() {
             -game invites
 
 
-         -create gameMode api
+         -create gamemode API
+         -vanillaTweaks :)
      */
 
     companion object {
@@ -56,10 +57,7 @@ class ChiccenAPI : KSpigot() {
      * database configurations
      */
     val dbConfigs by lazy {
-        object: DatabaseConfigurator {
-            override val host by lazy { configFile.getOrSet("host", "host-ip") }
-            override val port by lazy { configFile.getOrSet("port", 27017) }
-        }
+        DatabaseConfiguration(configFile.getOrSet("host", "host-ip"), configFile.getOrSet("port",27017))
     }
 
 
