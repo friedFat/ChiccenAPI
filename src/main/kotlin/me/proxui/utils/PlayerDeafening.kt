@@ -20,11 +20,7 @@ var Player.isDeaf: Boolean
 class PlayerDeafening {
     init {
         val manager = ProtocolLibrary.getProtocolManager()
-        manager.addPacketListener(object : PacketAdapter(chiccenAPI, ListenerPriority.NORMAL, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
-            override fun onPacketReceiving(e: PacketEvent) {
-                if(e.player.isDeaf) e.isCancelled = true
-            }
-
+        manager.addPacketListener(object : PacketAdapter(chiccenAPI, ListenerPriority.NORMAL, PacketType.Play.Server.NAMED_SOUND_EFFECT, PacketType.Play.Server.ENTITY_SOUND) {
             override fun onPacketSending(e: PacketEvent) {
                 if (e.player.isDeaf) e.isCancelled = true
             }

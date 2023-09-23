@@ -15,6 +15,9 @@ fun <T> MutableSet<T>.setContains(element: T, boolean: Boolean) {
     else this.remove(element)
 }
 
+/**
+ * Same as CommandContext#player
+ */
 val CommandContext.p; get() = player
 fun <T> CommandContext.getArgument(name: String, clazz: Class<T>): T = this.nmsContext.getArgument(name, clazz)
 fun <T: Any> CommandContext.getArgument(name: String, clazz: KClass<T>): T = getArgument(name, clazz.java)

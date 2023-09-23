@@ -1,6 +1,6 @@
-package me.proxui.dataholders
+package me.proxui.storage
 
-interface DataHolder {
+interface Storage {
 
     /**
      * @param key - the path to the value in the config
@@ -18,15 +18,14 @@ interface DataHolder {
      * Returns the value for the key as the type [T] or sets and returns [altValue] if no value was found
      */
     fun <T> getOrSet(key: String, altValue: () -> T): T {
-        return get<T>(key) ?: (altValue().also {
-            set(key, it)
-        })
+        if (!this.containsKey(key)) set(key, altValue())
+        return get<T>(key)!!
     }
 
     /**
      * Sets the value for the specified key
      */
-    operator fun set(key: String, any: Any?)
+    operator fun set(key: String, value: Any?)
 
     /**
      * Saves the file
@@ -37,4 +36,14 @@ interface DataHolder {
      * Reloads all values
      */
     fun reload() {}
+
+    /**
+     * @returns if the key is valid or not
+     */
+    fun containsKey(key: String) : Boolean
+
+    /**
+     * @returns if that value is saved somewhere in the dataholder
+     */
+    fun containsValue(value: Any): Boolean
 }
