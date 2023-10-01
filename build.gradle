@@ -20,9 +20,6 @@ dependencies {
     paperweight.paperDevBundle '1.20.1-R0.1-SNAPSHOT'
     compileOnly 'net.axay:kspigot:1.20.1'
 
-    //does nt work
-    compileOnly 'com.mojang:brigadier:1.0.18'
-
     // https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
     implementation 'org.mongodb:mongo-java-driver:3.12.14'
 

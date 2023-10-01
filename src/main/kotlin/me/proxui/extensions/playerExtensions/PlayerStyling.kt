@@ -1,9 +1,9 @@
 package me.proxui.extensions.playerExtensions
 
-import me.proxui.structure.database
+import me.proxui.structure.chiccenAPI
 import org.bukkit.entity.Player
 
-private val playerStylingRegistry = database.getCollection("playerStyling").getOrSet("playerStyling") { mutableMapOf<String, PlayerStyling>() }
+private val playerStylingRegistry = chiccenAPI.database.getCollection("playerStyling").getOrSet("playerStyling") { mutableMapOf<String, PlayerStyling>() }
 var Player.styling
     get() = playerStylingRegistry.getOrPut(uniqueId.toString()) { PlayerStyling() }
     set(value) {

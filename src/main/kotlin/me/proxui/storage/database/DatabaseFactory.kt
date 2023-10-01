@@ -8,7 +8,7 @@ class FakeDatabase internal constructor(plugin: Plugin, name: String) : DataFile
     override fun close() {}
 }
 
-fun DataCollection.Companion.create(database: IDatabase, name: String): IDataCollection {
-    return if (database.configurations.inDev) FakeDatabase(database.configurations.plugin, name)
-    else DataCollection(name, database.connection, database.database)
+fun DataCollection.Companion.create(plugin: Plugin, database: IDatabase, name: String, autoSave: Boolean = true): IDataCollection {
+    return if (database.configurations.inDev) FakeDatabase(database.configurations.plugin, "db_$name")
+    else DataCollection(plugin, name, database.connection, database.database, autoSave)
 }
