@@ -2,12 +2,15 @@ package me.proxui.feature.impl
 
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
-import me.proxui.storage.datafile.DataFile
 import me.proxui.extensions.playerExtensions.balance
 import me.proxui.feature.Feature
 import me.proxui.feature.FeatureInfo
+import me.proxui.storage.SavableStorage
 import me.proxui.structure.chiccenAPI
-import me.proxui.utils.*
+import me.proxui.utils.isDebugging
+import me.proxui.utils.p
+import me.proxui.utils.pluginPermission
+import me.proxui.utils.withEach
 import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.EntityArgument
 
@@ -15,42 +18,66 @@ import net.minecraft.commands.arguments.EntityArgument
 object ChiccenCommandFeature : Feature {
     override fun onLoad() {
         command("chiccen") {
-            requiresPermission(pluginPermission(chiccenAPI, "manage"))
+            requiresPermission(pluginPermission(chiccenAPI, "command.chiccen"))
 
-            literal("saveFiles") {
+            literal("ip") {
+                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.ip"))
                 runs {
-                    DataFile.REGISTERED_DATA_FILES.forEach { file ->
-                        file.save()
-                    }
-                    this.player.sendMessage("Saved all config/data files")
+                    p.sendMessage("IP of the server: ${server.ip}")
                 }
             }
-            literal("reloadFiles") {
+
+            literal("saveData") {
+                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.saveData"))
                 runs {
-                    DataFile.REGISTERED_DATA_FILES.forEach { file ->
-                        file.reload()
+                    try {
+                        SavableStorage.getRegistry().withEach { save() }
+                        p.sendMessage("Saved all data files")
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
-                    this.player.sendMessage("Reload all config/data files")
                 }
             }
+
+            literal("reloadData") {
+                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.reloadData"))
+                runs {
+                    try {
+                        SavableStorage.getRegistry().withEach { reload() }
+                        p.sendMessage("Reload all data files")
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+
             literal("debug") {
+                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.debug"))
                 argument("state", BoolArgumentType.bool()) {
                     runs {
-                        val newState = getArgument("state", Boolean::class)
-                        p.isDebugging = newState
-                        p.sendMessage("Debugging state has been updated")
+                        try {
+                            val newState = BoolArgumentType.getBool(nmsContext, "state")
+                            p.isDebugging = newState
+                            p.sendMessage("Debugging state has been updated")
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                }
+                runs {
+                    try {
+                        p.sendMessage("Kinda debugging -> Debugging: ${p.isDebugging}")
+                        p.sendMessage("You are currently " + (if (p.isDebugging) "" else "not ") + "debugging")
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
                 }
             }
 
             literal("test") {
-                literal("deafening") {
-                    runs {
-                        p.isDeaf = true
-                        p.sendMessage("You are now deaf")
-                    }
-                }
+                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test"))
                 literal("eco") {
+                    requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test.eco"))
                     argument("player", EntityArgument.player()) {
                         literal("get") {
                             runs {
@@ -64,7 +91,7 @@ object ChiccenCommandFeature : Feature {
                                     val target = EntityArgument.getPlayer(this.nmsContext, "player").bukkitEntity.player!!
                                     val amount = IntegerArgumentType.getInteger(this.nmsContext, "amount")
                                     target.balance = amount
-                                    p.sendMessage("Set ${target.name} balance to $amount coins")
+                                    p.sendMessage("Set the balance of ${target.name} to $amount coins")
                                 }
                             }
                         }

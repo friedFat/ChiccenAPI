@@ -1,16 +1,19 @@
 package me.proxui.storage.database.impl
 
 import com.google.gson.Gson
-import com.mongodb.MongoClient
+import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import me.proxui.storage.database.IDataCollection
 import me.proxui.utils.logger
+import net.axay.kspigot.event.listen
 import org.bson.Document
+import org.bukkit.event.server.PluginDisableEvent
+import org.bukkit.plugin.Plugin
 
 
 @Suppress("UNCHECKED_CAST")
-open class DataCollection internal constructor(val name: String, private val connection: MongoClient, private val database: MongoDatabase) : IDataCollection {
+class DataCollection internal constructor(plugin: Plugin, val name: String, private val connection: MongoClient, private val database: MongoDatabase, autoSave: Boolean = true) : IDataCollection {
 
     companion object {
         private val gsonObject by lazy { Gson() }
@@ -18,16 +21,29 @@ open class DataCollection internal constructor(val name: String, private val con
 
     private lateinit var cache: MutableMap<String, Any>
     private val collection: MongoCollection<Document> = let {
-        if(!database.listCollectionNames().contains(name)) database.createCollection(name)
+        if (!database.listCollectionNames().contains(name)) database.createCollection(name)
         database.getCollection(name)
     }
 
     init {
         reload()
-        save()
+
+
+        listen<PluginDisableEvent> { e ->
+            if (e.plugin != plugin) return@listen
+            save()
+        }
+        if (autoSave) register()
+        listen<PluginDisableEvent> { e ->
+            if (e.plugin != plugin) return@listen
+
+            if(autoSave) save()
+            close()
+        }
     }
 
-    override fun <T> get(key: String): T {
+    override fun <T> get(key: String, reload: Boolean): T {
+        if (reload) reload()
         try {
             return cache[key] as T
         } catch (ex: ClassCastException) {
@@ -41,11 +57,12 @@ open class DataCollection internal constructor(val name: String, private val con
         else cache[key] = value
     }
 
-    final override fun save() {
+    override fun save() {
+        collection.deleteMany(Document())
         collection.insertOne(Document.parse(gsonObject.toJson(cache)))
     }
 
-    final override fun reload() {
+    override fun reload() {
         cache = collection.find(MutableMap::class.java).first() as MutableMap<String, Any>? ?: mutableMapOf()
     }
 
