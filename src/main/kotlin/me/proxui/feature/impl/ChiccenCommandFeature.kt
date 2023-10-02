@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.proxui.extensions.playerExtensions.balance
 import me.proxui.feature.Feature
 import me.proxui.feature.FeatureInfo
-import me.proxui.storage.SavableStorage
+import me.proxui.storage.Savable
 import me.proxui.structure.chiccenAPI
 import me.proxui.utils.isDebugging
 import me.proxui.utils.p
@@ -31,7 +31,7 @@ object ChiccenCommandFeature : Feature {
                 requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.saveData"))
                 runs {
                     try {
-                        SavableStorage.getRegistry().withEach { save() }
+                        Savable.getRegistry().withEach { save() }
                         p.sendMessage("Saved all data files")
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -43,7 +43,7 @@ object ChiccenCommandFeature : Feature {
                 requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.reloadData"))
                 runs {
                     try {
-                        SavableStorage.getRegistry().withEach { reload() }
+                        Savable.getRegistry().withEach { reload() }
                         p.sendMessage("Reload all data files")
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -76,6 +76,7 @@ object ChiccenCommandFeature : Feature {
 
             literal("test") {
                 requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test"))
+
                 literal("eco") {
                     requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test.eco"))
                     argument("player", EntityArgument.player()) {

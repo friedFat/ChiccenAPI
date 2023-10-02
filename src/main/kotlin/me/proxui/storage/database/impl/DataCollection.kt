@@ -62,8 +62,9 @@ class DataCollection internal constructor(plugin: Plugin, val name: String, priv
         collection.insertOne(Document.parse(gsonObject.toJson(cache)))
     }
 
-    override fun reload() {
+    override fun reload(): DataCollection {
         cache = collection.find(MutableMap::class.java).first() as MutableMap<String, Any>? ?: mutableMapOf()
+        return this
     }
 
     override fun containsKey(key: String) = cache.containsKey(key)

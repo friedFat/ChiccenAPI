@@ -26,6 +26,13 @@ interface Storage {
         return get<T>(key)!!
     }
 
+    fun <T> setIfAbsent(key: String, altValue: T) {
+        if(!containsKey(key)) set(key, altValue)
+    }
+    fun <T> setIfAbsent(key: String, altValue: () -> T) {
+        if (!containsKey(key)) set(key, altValue())
+    }
+
     //this is kinda useless, because of elvis operator
     fun <T> getOrDefault(key: String, altValue: T): T {
         return if (containsKey(key)) get(key)!! else altValue

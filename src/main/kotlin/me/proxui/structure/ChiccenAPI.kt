@@ -1,9 +1,8 @@
 package me.proxui.structure
 
 import me.proxui.extensions.playerExtensions.PlayerDeafening
-import me.proxui.extensions.worldExtensions.CustomGameRuleManager
 import me.proxui.feature.impl.ChiccenCommandFeature
-import me.proxui.storage.SavableStorage
+import me.proxui.storage.Savable
 import me.proxui.storage.database.IDatabase
 import me.proxui.storage.database.impl.Database
 import me.proxui.storage.datafile.DataFile
@@ -14,9 +13,9 @@ val chiccenAPI by lazy { ChiccenAPI.INSTANCE }
 class ChiccenAPI : KSpigot(), Configurations {
 
     val database: IDatabase by lazy { Database(chiccenAPI, "minecraft") }
-    override val inDev: Boolean = false
+    override val useDatabase: Boolean = false
     override val plugin; get() = this
-    private val configFile: SavableStorage by lazy { DataFile(chiccenAPI, "configs", false) }
+    private val configFile: Savable by lazy { DataFile(chiccenAPI, "configs", false) }
 
     override lateinit var databaseURL: String; private set
 
@@ -24,6 +23,7 @@ class ChiccenAPI : KSpigot(), Configurations {
         internal lateinit var INSTANCE: ChiccenAPI
         /*
         TODO
+            -test debugging tracker
             -add sharedProperties, that use strings to communicate between. For example
                 chiccenApi.sharedProperties[player.uniqueId+"_friendCount"] = 10
                 and chiccenApi.sharedProperties["CorePlugin_"+player.uniqueId+"_friendCount"].toInt() - wait this is kinda just DataCollection - this sounds kinda stupid, its not clean and theres probably a better way
@@ -83,9 +83,8 @@ class ChiccenAPI : KSpigot(), Configurations {
     }
 
     override fun startup() {
-        databaseURL = configFile.getOrSet("databaseURL", "mongodb+srv://username:<password>@<host>:<port>?", true)
+        databaseURL = configFile.getOrSet("databaseURL", "mongodb+srv://username:<password>@<host>:<port>?")
         PlayerDeafening
-        CustomGameRuleManager
 
         //load features
         ChiccenCommandFeature.load()

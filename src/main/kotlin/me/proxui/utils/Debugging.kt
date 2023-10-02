@@ -8,25 +8,27 @@ import java.util.*
 import java.util.logging.Logger
 
 private val collection = chiccenAPI.database.getCollection("debugging")
-private val debugging = mutableSetOf<UUID>()
-
-var Player.isDebugging: Boolean
+private val debugging : ArrayList<UUID>
     get() {
         collection.reload()
-        return collection[this.uniqueId.toString()] ?: false
+        return collection.getOrSet("uuids", arrayListOf())
     }
+
+var Player.isDebugging: Boolean
+    get() = debugging.contains(this.uniqueId)
     set(value) {
-        collection[this.uniqueId.toString()] = if(value) true else null
-        collection.save()
-
         debugging.setContains(this.uniqueId, value)
+        collection.save()
     }
 
-fun Logger.debug(msg: String) {
+fun Logger.debug(message: String) {
+    val caller = Thread.currentThread().stackTrace[3]
+    val msg = "${caller.className}:${caller.lineNumber} -> $message"
+
     @Suppress("DEPRECATION")
     this.info(ChatColor.stripColor(msg))
     debugging.forEach {
-        (Bukkit.getPlayer(it) ?: return@forEach).sendMessage("§8Debug -> $msg")
+        (Bukkit.getPlayer(it) ?: return@forEach).sendMessage("§8§l[Debug]§r§7 $msg")
     }
 }
 

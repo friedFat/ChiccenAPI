@@ -1,7 +1,7 @@
 package me.proxui.storage.datafile
 
 import com.google.gson.GsonBuilder
-import me.proxui.storage.SavableStorage
+import me.proxui.storage.Savable
 import me.proxui.utils.logger
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.languageextensions.kotlinextensions.createIfNotExists
@@ -17,7 +17,7 @@ import java.util.*
 /**
  * Creates a .json data-file called [name].json
  */
-open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) : SavableStorage {
+open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) : Savable {
     companion object {
         private val gsonObject by lazy { GsonBuilder().setPrettyPrinting().create() }
     }
@@ -64,9 +64,11 @@ open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) 
         }
     }
 
-    final override fun reload() {
+    final override fun reload(): Savable {
         cache = (gsonObject.fromJson<Map<String, Any>?>(FileReader(file), Map::class.java) ?: mapOf())
             .toSortedMap(String.CASE_INSENSITIVE_ORDER)
+
+        return this
     }
 
     final override fun register() { super.register() }

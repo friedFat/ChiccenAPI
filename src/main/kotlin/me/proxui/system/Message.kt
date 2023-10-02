@@ -6,7 +6,7 @@ import net.axay.kspigot.extensions.bukkit.plainText
 import org.bukkit.Bukkit
 
 val ChiccenAPI.messages by lazy {
-    chiccenAPI.database.getCollection("messages").getOrSet("messages") {
+    chiccenAPI.database.getCollection("messages").setIfAbsent("messages") {
         object : Messages {
             override val noPermissionMsg = Bukkit.permissionMessage().plainText()
         }
