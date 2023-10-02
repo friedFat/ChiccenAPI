@@ -1,7 +1,7 @@
 package me.proxui.storage.database
 
-import me.proxui.storage.SavableStorage
+import me.proxui.storage.Storage
 
-interface IDataCollection : SavableStorage {
+interface IDataCollection : Storage {
     fun close()
 }

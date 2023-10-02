@@ -1,7 +1,7 @@
 package me.proxui.storage.datafile
 
 import com.google.gson.GsonBuilder
-import me.proxui.storage.SavableStorage
+import me.proxui.storage.Storage
 import me.proxui.utils.logger
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.languageextensions.kotlinextensions.createIfNotExists
@@ -13,13 +13,13 @@ import java.io.FileWriter
 import java.io.IOException
 import java.util.*
 
-
 /**
  * Creates a .json data-file called [name].json
  */
-open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) : SavableStorage {
+open class DataFile(plugin: Plugin, val name: String) : Storage {
     companion object {
         private val gsonObject by lazy { GsonBuilder().setPrettyPrinting().create() }
+        val REGISTERED_DATA_FILES = mutableListOf<DataFile>()
     }
 
     private val file = File(plugin.dataFolder, "$name.json")
@@ -28,13 +28,12 @@ open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) 
     init {
         file.createIfNotExists()
         reload()
+        @Suppress("LeakingThis") //No reason to suppress this, I just don't care
+        REGISTERED_DATA_FILES.add(this)
 
-        if (autoSave) {
-            register()
-            listen<PluginDisableEvent> { e ->
-                if (e.plugin != plugin) return@listen
-                save()
-            }
+        listen<PluginDisableEvent> { e ->
+            if (e.plugin != plugin) return@listen
+            save()
         }
     }
 
@@ -43,8 +42,7 @@ open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) 
         else cache[key] = value
     }
 
-    override fun <T> get(key: String, reload: Boolean): T? {
-        if (reload) reload()
+    override fun <T> get(key: String): T? {
         try {
             @Suppress("UNCHECKED_CAST")
             return cache[key] as T?
@@ -68,8 +66,6 @@ open class DataFile(plugin: Plugin, val name: String, autoSave: Boolean = true) 
         cache = (gsonObject.fromJson<Map<String, Any>?>(FileReader(file), Map::class.java) ?: mapOf())
             .toSortedMap(String.CASE_INSENSITIVE_ORDER)
     }
-
-    final override fun register() { super.register() }
 
     override fun containsKey(key: String) = cache.containsKey(key)
 

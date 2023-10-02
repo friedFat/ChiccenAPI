@@ -7,4 +7,3 @@ api-version: 1.20
 main: me.proxui.structure.ChiccenAPI
 libraries:
   - net.axay:kspigot:1.20.1
-  - org.mongodb:mongo-java-driver:3.12.14

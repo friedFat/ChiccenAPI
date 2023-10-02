@@ -1,77 +1,71 @@
 package me.proxui.structure
 
-import me.proxui.extensions.playerExtensions.PlayerDeafening
-import me.proxui.extensions.worldExtensions.CustomGameRuleManager
 import me.proxui.feature.impl.ChiccenCommandFeature
-import me.proxui.storage.SavableStorage
+import me.proxui.storage.Storage
+import me.proxui.storage.database.DatabaseConfiguration
 import me.proxui.storage.database.IDatabase
 import me.proxui.storage.database.impl.Database
 import me.proxui.storage.datafile.DataFile
+import me.proxui.utils.PlayerDeafening
 import net.axay.kspigot.main.KSpigot
 
 val chiccenAPI by lazy { ChiccenAPI.INSTANCE }
+val database: IDatabase by lazy { Database(chiccenAPI, "data") }
 
 class ChiccenAPI : KSpigot(), Configurations {
 
-    val database: IDatabase by lazy { Database(chiccenAPI, "minecraft") }
-    override val inDev: Boolean = false
+    private val configFile: Storage by lazy { DataFile(chiccenAPI, "configs") }
+    override val inDev: Boolean = true
     override val plugin; get() = this
-    private val configFile: SavableStorage by lazy { DataFile(chiccenAPI, "configs", false) }
-
-    override lateinit var databaseURL: String; private set
+    override val databaseConfiguration by lazy {
+        DatabaseConfiguration(
+            configFile.getOrSet("host", "host"),
+            configFile.getOrSet("port", 27017),
+            configFile.getOrSet("username", "username"),
+            configFile.getOrSet("password", "password")
+        )
+    }
 
     companion object {
-        internal lateinit var INSTANCE: ChiccenAPI
         /*
         TODO
-            -add sharedProperties, that use strings to communicate between. For example
-                chiccenApi.sharedProperties[player.uniqueId+"_friendCount"] = 10
-                and chiccenApi.sharedProperties["CorePlugin_"+player.uniqueId+"_friendCount"].toInt() - wait this is kinda just DataCollection - this sounds kinda stupid, its not clean and theres probably a better way
+            -i think retrieving data from file after reloading doesnt work - probably linked with resetting
+            -fix feature modules resetting configurations - made it use containsKey but did not test
 
-            -configure "NetWorld"
+            -fix command entity argument
+            -database
+            -make debugging store in database
 
-            core plugin:
-                -styling command to manage a players styling
-                -chat:
-                    -colors
-                    -slow-mode + bypass
-                    -critical message logging
-                    -:hand:, if enabled in server (ChiccenCommand to set)
+            -isDeaf not silencing everything
+            -fix proxy
+            -add economy :) thats ez - should work now but unused
+            -WorldCreator - maybe steal from noRisk :>, https://github.com/copyandexecute/youtuber-ideen-modus/blob/main/src/main/kotlin/de/hglabor/youtuberideen/game/phases/LobbyPhase.kt#L23 this good
 
-                -party plugin
-                    -@party/@p to write in party chat
-                    -"/pc" or "/partyChat" to switch to party chat or to write for once
-                    -"/all" to write in public chat
-
-                friends plugin
-                    -game invites
-                    -friend list
-                    -online friends amount
-
-            lobby plugin
+            -lobby plugin
                 -navigator
                 -consistent saturation/health
-                -gm 2
                 -bossbar advertisement/info
                 -scoreboard: rank, friends online, online, coins, online-time
                 -SilentArea + /pWeather + setting to mute weather
                 -disable join msg
 
+                -CustomChat
+                -colors
+                -slowmode + bypass
+                -critical words + logging
+                -:hand: if not disabled(chiccenAPI#chatOptions#allowFlexxing
 
-             mini game API - im scared of this
-                -phases
-                -WorldCreator - maybe steal from noRisk :>, https://github.com/copyandexecute/youtuber-ideen-modus/blob/main/src/main/kotlin/de/hglabor/youtuberideen/game/phases/LobbyPhase.kt#L23 this good
+             -add party plugin
+                -@party/@p to write in party chat
+                -/pc or partyChat to toggle
 
-             vanillaTweaks
-                -gamemode 0 + gm alias
-                -vanish
-                -inv see
-                -ec see
-                -mute
-                -warn
-                -better ban/kick screen
-                -unban alias for pardon
+             -add friends plugin
+                -game invites
+
+             -create minigame API
+             -vanillaTweaks :)
          */
+        internal lateinit var INSTANCE: ChiccenAPI
     }
 
     init {
@@ -83,9 +77,7 @@ class ChiccenAPI : KSpigot(), Configurations {
     }
 
     override fun startup() {
-        databaseURL = configFile.getOrSet("databaseURL", "mongodb+srv://username:<password>@<host>:<port>?", true)
-        PlayerDeafening
-        CustomGameRuleManager
+        PlayerDeafening()
 
         //load features
         ChiccenCommandFeature.load()

@@ -1,29 +1,22 @@
+@file:Suppress("DEPRECATION")
+
 package me.proxui.utils
 
-import me.proxui.structure.chiccenAPI
+import me.proxui.structure.database
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Logger
 
-private val collection = chiccenAPI.database.getCollection("debugging")
-private val debugging = mutableSetOf<UUID>()
-
-var Player.isDebugging: Boolean
-    get() {
-        collection.reload()
-        return collection[this.uniqueId.toString()] ?: false
-    }
+private val debugging = database.getCollection("debugging").getOrSet("debugging") { mutableSetOf<UUID>() }
+var Player.isDebugging : Boolean
+    get() = debugging.contains(this.uniqueId)
     set(value) {
-        collection[this.uniqueId.toString()] = if(value) true else null
-        collection.save()
-
         debugging.setContains(this.uniqueId, value)
     }
 
 fun Logger.debug(msg: String) {
-    @Suppress("DEPRECATION")
     this.info(ChatColor.stripColor(msg))
     debugging.forEach {
         (Bukkit.getPlayer(it) ?: return@forEach).sendMessage("§8Debug -> $msg")
@@ -38,8 +31,6 @@ fun Logger.debug(msg: String) {
 fun test(id: Int, expected: String, output: () -> String) {
     val out = output()
     val passed = expected == out
-    logger.debug(
-        "Test#$id ---------------- " + if (passed) "passed" else "failed" +
-                "\n>                                '$expected' | '$out'"
-    )
+    logger.debug("Test#$id ---------------- " + if (passed) "passed" else "failed" +
+            "\n>                                '$expected' | '$out'")
 }
