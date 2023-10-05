@@ -66,7 +66,7 @@ object ChiccenCommandFeature : Feature {
                 }
                 runs {
                     try {
-                        p.sendMessage("Kinda debugging -> Debugging: ${p.isDebugging}")
+                        p.isDebugging
                         p.sendMessage("You are currently " + (if (p.isDebugging) "" else "not ") + "debugging")
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -89,10 +89,14 @@ object ChiccenCommandFeature : Feature {
                         literal("set") {
                             argument("amount", IntegerArgumentType.integer()) {
                                 runs {
-                                    val target = EntityArgument.getPlayer(this.nmsContext, "player").bukkitEntity.player!!
-                                    val amount = IntegerArgumentType.getInteger(this.nmsContext, "amount")
-                                    target.balance = amount
-                                    p.sendMessage("Set the balance of ${target.name} to $amount coins")
+                                    try {
+                                        val target = EntityArgument.getPlayer(this.nmsContext, "player").bukkitEntity.player!!
+                                        val amount = IntegerArgumentType.getInteger(this.nmsContext, "amount")
+                                        target.balance = amount
+                                        p.sendMessage("Set the balance of ${target.name} to $amount coins")
+                                    }catch (ex: Exception) {
+                                        ex.printStackTrace()
+                                    }
                                 }
                             }
                         }

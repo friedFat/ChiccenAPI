@@ -1,4 +1,4 @@
-package me.proxui.storage.database
+package me.proxui.storage.database.datacollection
 
 import me.proxui.storage.Savable
 import me.proxui.storage.Storage

@@ -1,10 +1,9 @@
-package me.proxui.storage.database.impl
+package me.proxui.storage.database.datacollection
 
 import com.google.gson.Gson
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import me.proxui.storage.database.IDataCollection
 import me.proxui.utils.logger
 import net.axay.kspigot.event.listen
 import org.bson.Document

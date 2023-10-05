@@ -8,14 +8,19 @@ import java.util.*
 import java.util.logging.Logger
 
 private val collection = chiccenAPI.database.getCollection("debugging")
-private val debugging : ArrayList<UUID>
+private val debugging: ArrayList<UUID>
     get() {
+        println("before reloading db: $debugging")
         collection.reload()
+        println("after reloading db: $debugging")
         return collection.getOrSet("uuids", arrayListOf())
     }
 
 var Player.isDebugging: Boolean
-    get() = debugging.contains(this.uniqueId)
+    get() {
+        logger.info("isDebugging getter called")
+        return debugging.contains(this.uniqueId)
+    }
     set(value) {
         debugging.setContains(this.uniqueId, value)
         collection.save()

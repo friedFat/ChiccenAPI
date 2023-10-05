@@ -2,6 +2,7 @@ package me.proxui.storage.database
 
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoDatabase
+import me.proxui.storage.database.datacollection.IDataCollection
 import me.proxui.structure.Configurations
 
 interface IDatabase {

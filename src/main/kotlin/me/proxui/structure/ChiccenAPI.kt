@@ -4,7 +4,7 @@ import me.proxui.extensions.playerExtensions.PlayerDeafening
 import me.proxui.feature.impl.ChiccenCommandFeature
 import me.proxui.storage.Savable
 import me.proxui.storage.database.IDatabase
-import me.proxui.storage.database.impl.Database
+import me.proxui.storage.database.Database
 import me.proxui.storage.datafile.DataFile
 import net.axay.kspigot.main.KSpigot
 
@@ -23,10 +23,7 @@ class ChiccenAPI : KSpigot(), Configurations {
         internal lateinit var INSTANCE: ChiccenAPI
         /*
         TODO
-            -test debugging tracker
-            -add sharedProperties, that use strings to communicate between. For example
-                chiccenApi.sharedProperties[player.uniqueId+"_friendCount"] = 10
-                and chiccenApi.sharedProperties["CorePlugin_"+player.uniqueId+"_friendCount"].toInt() - wait this is kinda just DataCollection - this sounds kinda stupid, its not clean and theres probably a better way
+            -test debugging tracker - not working
 
             -configure "NetWorld"
 

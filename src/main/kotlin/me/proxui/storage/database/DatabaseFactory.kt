@@ -1,6 +1,7 @@
 package me.proxui.storage.database
 
-import me.proxui.storage.database.impl.DataCollection
+import me.proxui.storage.database.datacollection.IDataCollection
+import me.proxui.storage.database.datacollection.DataCollection
 import me.proxui.storage.datafile.DataFile
 import org.bukkit.plugin.Plugin
 
