@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.math.ceil
 
 
-class Cooldown(val defaultMillisLength: Int) {
+data class Cooldown(val defaultMillisLength: Int) {
 
     private val expiringTime = HashMap<UUID, Long>()
 

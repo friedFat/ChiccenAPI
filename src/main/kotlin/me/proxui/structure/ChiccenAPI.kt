@@ -46,7 +46,7 @@ class ChiccenAPI : KSpigot(), Configurations {
         /*
         TODO
             -test debugging tracker - not working
-            -test storage system
+            -test storage system: serialization might not be working, I could use gson instead
 
             -configure "NetWorld"
 

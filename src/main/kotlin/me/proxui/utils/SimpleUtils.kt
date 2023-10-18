@@ -7,7 +7,6 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.Plugin
-import java.util.*
 
 val logger; get() = Bukkit.getLogger()
 
@@ -18,9 +17,9 @@ fun <T> MutableSet<T>.setContains(element: T, boolean: Boolean) {
     else remove(element)
 }
 
-fun <T> AbstractList<T>.setContains(element: T, boolean: Boolean) {
+fun <T> MutableList<T>.setContains(element: T, boolean: Boolean) {
     if (boolean) this.add(element)
-    else remove(element)
+    else this.remove(element)
 }
 
 /**

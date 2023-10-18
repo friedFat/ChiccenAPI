@@ -25,6 +25,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.comphenix.protocol/ProtocolLib
     compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json-jvm
+    runtimeOnly 'org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.0-RC'
 }
 
 kotlin {
