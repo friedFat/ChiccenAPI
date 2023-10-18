@@ -8,9 +8,9 @@ import org.bukkit.OfflinePlayer
 
 private val dataCollection by lazy { chiccenAPI.database.getCollection("economy") }
 var OfflinePlayer.balance: Int
-    get() = dataCollection.let {
-        it.reload()
-        it.get<Int>(uniqueId.toString()) ?: 0
+    get() {
+        dataCollection.reload()
+        return dataCollection.getInteger(this.uniqueId.toString())
     }
     set(value) {
         val event = PlayerBalanceUpdateEvent(this, value)
