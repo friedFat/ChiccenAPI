@@ -1,11 +1,10 @@
-package me.proxui.feature.impl
+package me.proxui.features.impl
 
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.proxui.extensions.playerExtensions.balance
-import me.proxui.feature.Feature
-import me.proxui.feature.FeatureInfo
-import me.proxui.storage.Savable
+import me.proxui.features.Feature
+import me.proxui.storage.SavableStorage
 import me.proxui.structure.chiccenAPI
 import me.proxui.utils.isDebugging
 import me.proxui.utils.p
@@ -14,9 +13,8 @@ import me.proxui.utils.withEach
 import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.EntityArgument
 
-@FeatureInfo("ChiccenCommand")
-object ChiccenCommandFeature : Feature {
-    override fun onLoad() {
+object ChiccenCommandFeature : Feature("ChiccenCommand") {
+    override fun onInitialization() {
         command("chiccen") {
             requiresPermission(pluginPermission(chiccenAPI, "command.chiccen"))
 
@@ -31,7 +29,7 @@ object ChiccenCommandFeature : Feature {
                 requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.saveData"))
                 runs {
                     try {
-                        Savable.getRegistry().withEach { save() }
+                        SavableStorage.getRegistry().withEach { save() }
                         p.sendMessage("Saved all data files")
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -43,7 +41,7 @@ object ChiccenCommandFeature : Feature {
                 requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.reloadData"))
                 runs {
                     try {
-                        Savable.getRegistry().withEach { reload() }
+                        SavableStorage.getRegistry().withEach { reload() }
                         p.sendMessage("Reload all data files")
                     } catch (ex: Exception) {
                         ex.printStackTrace()

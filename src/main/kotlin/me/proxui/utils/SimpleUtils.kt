@@ -6,12 +6,12 @@ import org.bukkit.Bukkit
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.permissions.Permission
-import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.Plugin
 import java.util.*
 
-val logger by lazy { Bukkit.getLogger() }
+val logger; get() = Bukkit.getLogger()
 
-fun pluginPermission(plugin: JavaPlugin, name: String) = Permission("${plugin.name}." + name)
+fun pluginPermission(plugin: Plugin, name: String) = Permission("${plugin.name}." + name)
 
 fun <T> MutableSet<T>.setContains(element: T, boolean: Boolean) {
     if (boolean) add(element)
@@ -28,15 +28,17 @@ fun <T> AbstractList<T>.setContains(element: T, boolean: Boolean) {
  */
 val CommandContext.p; get() = player
 
-fun <T> Collection<T>.withEach(action: T.() -> Unit) {
-    for (element in this) {
-        action(element)
-    }
-}
-
 inline fun <reified T : Event> cancelEvent(crossinline cancel: (T) -> Boolean = { true }) {
     listen<T> {
         require(it is Cancellable)
         if (cancel(it)) (it as Cancellable).isCancelled = true
     }
+}
+
+fun Set<Map.Entry<String, Any?>>.toMap(): Map<String, Any?> {
+    val map = mutableMapOf<String, Any?>()
+    for (entry in this) {
+        map[entry.key] = entry.value
+    }
+    return map.toMap()
 }

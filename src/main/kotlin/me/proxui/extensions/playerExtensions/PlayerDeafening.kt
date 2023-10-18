@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
+import me.proxui.features.Feature
 import me.proxui.structure.chiccenAPI
 import me.proxui.utils.setContains
 import org.bukkit.entity.Player
@@ -18,8 +19,8 @@ var Player.isDeaf: Boolean
         deafPlayers.setContains(this.uniqueId, value)
     }
 
-object PlayerDeafening {
-    init {
+object PlayerDeafening : Feature("PlayerDeafening") {
+    override fun onInitialization() {
         val manager = ProtocolLibrary.getProtocolManager()
         manager.addPacketListener(object : PacketAdapter(chiccenAPI, ListenerPriority.NORMAL, PacketType.Play.Server.NAMED_SOUND_EFFECT, PacketType.Play.Server.ENTITY_SOUND) {
             override fun onPacketSending(e: PacketEvent) {

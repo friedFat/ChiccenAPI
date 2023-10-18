@@ -1,29 +1,52 @@
 package me.proxui.structure
 
+import me.proxui._storage.database.mongo.IMongoDatabase
+import me.proxui._storage.database.mongo.MongoDatabase
+import me.proxui._storage.datafile.DataFile
+import me.proxui._storage.getOrSet
 import me.proxui.extensions.playerExtensions.PlayerDeafening
-import me.proxui.feature.impl.ChiccenCommandFeature
-import me.proxui.storage.Savable
-import me.proxui.storage.database.IDatabase
-import me.proxui.storage.database.Database
-import me.proxui.storage.datafile.DataFile
+import me.proxui.features.impl.ChiccenCommandFeature
+import me.proxui.features.impl.SafeReloadFeature
 import net.axay.kspigot.main.KSpigot
 
 val chiccenAPI by lazy { ChiccenAPI.INSTANCE }
 
 class ChiccenAPI : KSpigot(), Configurations {
 
-    val database: IDatabase by lazy { Database(chiccenAPI, "minecraft") }
-    override val useDatabase: Boolean = false
-    override val plugin; get() = this
-    private val configFile: Savable by lazy { DataFile(chiccenAPI, "configs", false) }
-
     override lateinit var databaseURL: String; private set
+    val database: IMongoDatabase by lazy { MongoDatabase(chiccenAPI, "minecraft") }
+    override val saveLocally: Boolean = false
+    override val plugin; get() = this
+
+    private val configFile by lazy { DataFile(this, "configs") }
+
+    override fun load() {
+        INSTANCE = this
+        logger.info("Loading plugin...")
+    }
+
+    override fun startup() {
+        databaseURL = configFile.getOrSet("databaseURL", "mongodb+srv://username:<password>@<host>:<port>?")
+
+
+        //load features
+        PlayerDeafening.init()
+        ChiccenCommandFeature.init()
+        SafeReloadFeature.init()
+
+        logger.info("Loaded plugin!")
+    }
+
+    override fun shutdown() {
+        logger.info("Shut down plugin!")
+    }
 
     companion object {
         internal lateinit var INSTANCE: ChiccenAPI
         /*
         TODO
             -test debugging tracker - not working
+            -test storage system
 
             -configure "NetWorld"
 
@@ -69,27 +92,5 @@ class ChiccenAPI : KSpigot(), Configurations {
                 -better ban/kick screen
                 -unban alias for pardon
          */
-    }
-
-    init {
-        INSTANCE = this
-    }
-
-    override fun load() {
-        logger.info("Loading plugin")
-    }
-
-    override fun startup() {
-        databaseURL = configFile.getOrSet("databaseURL", "mongodb+srv://username:<password>@<host>:<port>?")
-        PlayerDeafening
-
-        //load features
-        ChiccenCommandFeature.load()
-
-        logger.info("Loaded plugin")
-    }
-
-    override fun shutdown() {
-        logger.info("Shut down plugin")
     }
 }

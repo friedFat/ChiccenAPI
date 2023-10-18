@@ -13,7 +13,7 @@ var OfflinePlayer.balance: Int
         it.get<Int>(uniqueId.toString()) ?: 0
     }
     set(value) {
-        val event = PlayerBalanceUpdateEvent(this, balance, value)
+        val event = PlayerBalanceUpdateEvent(this, value)
         Bukkit.getPluginManager().callEvent(event)
         if (event.isCancelled) return
 

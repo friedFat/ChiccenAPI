@@ -1,9 +1,9 @@
 package me.proxui.structure
 
-import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.Plugin
 
 interface Configurations {
-    val useDatabase: Boolean
-    val plugin: JavaPlugin
+    val saveLocally: Boolean
+    val plugin: Plugin
     val databaseURL: String
 }

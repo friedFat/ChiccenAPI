@@ -1,12 +1,14 @@
 package me.proxui.events
 
+import me.proxui.extensions.playerExtensions.balance
 import org.bukkit.OfflinePlayer
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class PlayerBalanceUpdateEvent(val player: OfflinePlayer, val previousBalance: Int, newBalance: Int) : Event(), Cancellable {
+class PlayerBalanceUpdateEvent(val player: OfflinePlayer, newBalance: Int) : Event(), Cancellable {
 
+    val previousBalance = player.balance
     private var isCancelled = false
     var newBalance = newBalance
         set(value) {
