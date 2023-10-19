@@ -27,17 +27,10 @@ fun <T> MutableList<T>.setContains(element: T, boolean: Boolean) {
  */
 val CommandContext.p; get() = player
 
-inline fun <reified T : Event> cancelEvent(crossinline cancel: (T) -> Boolean = { true }) {
-    listen<T> {
-        require(it is Cancellable)
-        if (cancel(it)) (it as Cancellable).isCancelled = true
-    }
-}
 
-fun Set<Map.Entry<String, Any?>>.toMap(): Map<String, Any?> {
-    val map = mutableMapOf<String, Any?>()
-    for (entry in this) {
-        map[entry.key] = entry.value
+//Just a simple function definition
+inline fun <reified T> cancelEvent(crossinline shouldCancel: (T) -> Boolean = { true }) where T : Event, T : Cancellable {
+    listen<T> {
+        if (shouldCancel(it)) (it as Cancellable).isCancelled = true
     }
-    return map.toMap()
 }

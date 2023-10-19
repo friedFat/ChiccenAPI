@@ -9,10 +9,9 @@ import me.proxui._storage.Storage
 import me.proxui._storage.datafile.DataFile
 import me.proxui.structure.Configurations
 import me.proxui.utils.logger
-import me.proxui.utils.toMap
 import org.bson.Document
 
-class MongoDatabase(private val configs: Configurations, val name: String) : IMongoDatabase {
+open class MongoDatabase(private val configs: Configurations, val name: String) : IMongoDatabase {
 
     private val connection: MongoClient
     private val database: MongoDatabase
@@ -39,16 +38,16 @@ class MongoDatabase(private val configs: Configurations, val name: String) : IMo
     override fun close() = this.connection.close()
 }
 
-class MongoCollection(private val collection: MongoCollection<Document>) : Storage(Document()){
+open class MongoCollection(private val collection: MongoCollection<Document>) : Storage(Document()){
     init {
         reload()
     }
 
     override fun save() {
-        collection.insertOne(Document(super.entries.toMap()))
+        collection.insertOne(Document(this))
     }
 
-    override fun reload() {
+    final override fun reload() {
         super.putAll(collection.find().first() ?: Document())
     }
 }

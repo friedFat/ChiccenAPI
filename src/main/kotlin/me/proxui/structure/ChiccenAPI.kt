@@ -1,5 +1,6 @@
 package me.proxui.structure
 
+import me.proxui._storage.Storage
 import me.proxui._storage.database.mongo.IMongoDatabase
 import me.proxui._storage.database.mongo.MongoDatabase
 import me.proxui._storage.datafile.DataFile
@@ -18,7 +19,7 @@ class ChiccenAPI : KSpigot(), Configurations {
     override val saveLocally: Boolean = false
     override val plugin; get() = this
 
-    private val configFile by lazy { DataFile(this, "configs") }
+    private val configFile: Storage by lazy { DataFile(this, "configs") }
 
     override fun load() {
         INSTANCE = this
@@ -46,7 +47,7 @@ class ChiccenAPI : KSpigot(), Configurations {
         /*
         TODO
             -test debugging tracker - not working
-            -test storage system: serialization might not be working, I could use gson instead
+            -test storage system: serialization might not be working
 
             -configure "NetWorld"
 

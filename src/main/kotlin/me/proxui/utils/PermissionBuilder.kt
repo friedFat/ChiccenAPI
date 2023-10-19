@@ -10,8 +10,7 @@ fun permission(builder: PermissionBuilder.() -> Unit) : Permission {
     }
 }
 
-class PermissionBuilder {
-
+open class PermissionBuilder {
     init {
         permission {
             name = ""
