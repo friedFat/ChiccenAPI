@@ -20,10 +20,6 @@ open class DataFile(plugin: Plugin, private val name: String) : Storage(Document
 
     init {
         this.reload()
-
-        val datafile = DataFile(chiccenAPI, "biches")
-        datafile.putIfAbsent("amount", 69)
-        datafile.save()
     }
 
     override fun save() {
