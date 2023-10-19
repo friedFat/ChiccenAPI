@@ -37,7 +37,7 @@ fun Logger.debug(message: String) {
  * @param expected the expected output
  * @param output the action that should return [expected]
  */
-fun test(id: Int, expected: String, output: () -> String) {
+fun <T> test(id: Int, expected: T, output: () -> T) {
     val out = output()
     val passed = expected == out
     logger.debug(

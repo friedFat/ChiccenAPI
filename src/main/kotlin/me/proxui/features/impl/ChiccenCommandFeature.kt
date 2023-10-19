@@ -45,8 +45,35 @@ object ChiccenCommandFeature : Feature("ChiccenCommand") {
             literal("test") {
                 requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test"))
 
+                literal("database") {
+                    literal("set") {
+                        argument("value", IntegerArgumentType.integer()) {
+                            argument("save", BoolArgumentType.bool()) {
+                                runs {
+                                    chiccenAPI.database.getCollection("bitches").also {
+                                        it["amount"] = IntegerArgumentType.getInteger(this.nmsContext, "value")
+                                        if (BoolArgumentType.getBool(this.nmsContext, "save")) {
+                                            it.save()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    literal("getValue") {
+                        runs {
+                            argument("reload", BoolArgumentType.bool())
+                            chiccenAPI.database.getCollection("bitches").also {
+                                if (BoolArgumentType.getBool(this.nmsContext, "reload")) {
+                                    it.reload()
+                                }
+                                p.sendMessage("Amount of bitches: " + it["amount"])
+                            }
+                        }
+                    }
+                }
+
                 literal("eco") {
-                    requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test.eco"))
                     argument("player", EntityArgument.player()) {
                         literal("get") {
                             runs {
@@ -62,7 +89,7 @@ object ChiccenCommandFeature : Feature("ChiccenCommand") {
                                         val amount = IntegerArgumentType.getInteger(this.nmsContext, "amount")
                                         target.balance = amount
                                         p.sendMessage("Set the balance of ${target.name} to $amount coins")
-                                    }catch (ex: Exception) {
+                                    } catch (ex: Exception) {
                                         ex.printStackTrace()
                                     }
                                 }
