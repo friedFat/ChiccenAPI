@@ -19,7 +19,7 @@ open class DataFile(plugin: Plugin, private val name: String) : Storage(Document
     private val file = File(plugin.dataFolder, "$name.json")
 
     init {
-        reload()
+        this.reload()
 
         val datafile = DataFile(chiccenAPI, "biches")
         datafile.putIfAbsent("amount", 69)
