@@ -8,7 +8,7 @@ import org.bukkit.Bukkit
 import org.bukkit.event.EventPriority
 import org.bukkit.event.server.PluginDisableEvent
 
-object SafeReloadFeature : Feature("SafeReload") {
+object SafeReloadFeature : Feature(chiccenAPI,"SafeReload") {
     override fun onInitialization() {
         listen<PluginDisableEvent>(priority = EventPriority.HIGHEST) { it ->
             if(it.plugin.name != chiccenAPI.name) return@listen

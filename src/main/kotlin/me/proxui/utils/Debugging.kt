@@ -1,5 +1,6 @@
 package me.proxui.utils
 
+import me.proxui.extensions.setContains
 import me.proxui.structure.chiccenAPI
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor

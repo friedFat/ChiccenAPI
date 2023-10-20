@@ -1,4 +1,4 @@
-package me.proxui._storage.database
+package me.proxui.storage.database
 
 interface IDatabase {
 

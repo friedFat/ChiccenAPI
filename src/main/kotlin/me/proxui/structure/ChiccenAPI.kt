@@ -1,11 +1,10 @@
 package me.proxui.structure
 
-import me.proxui._storage.Storage
-import me.proxui._storage.database.mongo.IMongoDatabase
-import me.proxui._storage.database.mongo.MongoDatabase
-import me.proxui._storage.datafile.DataFile
-import me.proxui._storage.getOrSet
-import me.proxui.extensions.playerExtensions.PlayerDeafening
+import me.proxui.storage.Storage
+import me.proxui.storage.database.mongo.IMongoDatabase
+import me.proxui.storage.database.mongo.MongoDatabase
+import me.proxui.storage.datafile.Datafile
+import me.proxui.storage.getOrSet
 import me.proxui.features.impl.ChiccenCommandFeature
 import me.proxui.features.impl.SafeReloadFeature
 import net.axay.kspigot.main.KSpigot
@@ -19,7 +18,7 @@ class ChiccenAPI : KSpigot(), Configurations {
     override val saveLocally: Boolean = false
     override val plugin; get() = this
 
-    private val configFile: Storage by lazy { DataFile(this, "configs") }
+    private val configFile: Storage by lazy { Datafile(this, "configs") }
 
     override fun load() {
         INSTANCE = this
@@ -31,7 +30,6 @@ class ChiccenAPI : KSpigot(), Configurations {
 
 
         //load features
-        PlayerDeafening.init()
         ChiccenCommandFeature.init()
         SafeReloadFeature.init()
 
@@ -79,7 +77,7 @@ class ChiccenAPI : KSpigot(), Configurations {
                 -disable join msg
 
 
-             mini game API - im scared of this
+             mini-game API - im scared of this
                 -phases
                 -WorldCreator - maybe steal from noRisk :>, https://github.com/copyandexecute/youtuber-ideen-modus/blob/main/src/main/kotlin/de/hglabor/youtuberideen/game/phases/LobbyPhase.kt#L23 this good
 

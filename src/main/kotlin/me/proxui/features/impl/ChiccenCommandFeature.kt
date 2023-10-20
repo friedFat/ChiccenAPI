@@ -2,16 +2,15 @@ package me.proxui.features.impl
 
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
+import me.proxui.extensions.p
 import me.proxui.extensions.playerExtensions.balance
 import me.proxui.features.Feature
 import me.proxui.structure.chiccenAPI
 import me.proxui.utils.isDebugging
-import me.proxui.utils.p
-import me.proxui.utils.pluginPermission
 import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.EntityArgument
 
-object ChiccenCommandFeature : Feature("ChiccenCommand") {
+object ChiccenCommandFeature : Feature(chiccenAPI,"ChiccenCommand") {
     override fun onInitialization() {
         command("chiccen") {
 
@@ -20,7 +19,7 @@ object ChiccenCommandFeature : Feature("ChiccenCommand") {
             }
 
             literal("debug") {
-                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.debug"))
+                requiresPermission("chiccenapi.command.chiccen.debug")
                 argument("state", BoolArgumentType.bool()) {
                     runs {
                         try {
@@ -43,7 +42,7 @@ object ChiccenCommandFeature : Feature("ChiccenCommand") {
             }
 
             literal("test") {
-                requiresPermission(pluginPermission(chiccenAPI, "command.chiccen.test"))
+                requiresPermission("chiccenapi.command.chiccen.test")
 
                 literal("database") {
                     literal("set") {
