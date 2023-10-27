@@ -1,12 +1,12 @@
 package me.proxui.structure
 
+import me.proxui.modules.impl.ChiccenCommandModule
+import me.proxui.modules.impl.SafeReloadModule
+import me.proxui.storage.FileMode
 import me.proxui.storage.Storage
 import me.proxui.storage.database.mongo.IMongoDatabase
 import me.proxui.storage.database.mongo.MongoDatabase
 import me.proxui.storage.datafile.Datafile
-import me.proxui.storage.getOrSet
-import me.proxui.features.impl.ChiccenCommandFeature
-import me.proxui.features.impl.SafeReloadFeature
 import net.axay.kspigot.main.KSpigot
 
 val chiccenAPI by lazy { ChiccenAPI.INSTANCE }
@@ -18,7 +18,7 @@ class ChiccenAPI : KSpigot(), Configurations {
     override val saveLocally: Boolean = false
     override val plugin; get() = this
 
-    private val configFile: Storage by lazy { Datafile(this, "configs") }
+    private val configFile: Storage by lazy { Datafile(this, "configs", FileMode.LOAD_ONLY) }
 
     override fun load() {
         INSTANCE = this
@@ -30,8 +30,8 @@ class ChiccenAPI : KSpigot(), Configurations {
 
 
         //load features
-        ChiccenCommandFeature.init()
-        SafeReloadFeature.init()
+        ChiccenCommandModule.init()
+        SafeReloadModule.init()
 
         logger.info("Loaded plugin!")
     }

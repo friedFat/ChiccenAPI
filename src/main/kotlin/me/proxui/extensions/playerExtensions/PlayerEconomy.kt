@@ -1,24 +1,21 @@
 package me.proxui.extensions.playerExtensions
 
 import me.proxui.events.PlayerBalanceUpdateEvent
+import me.proxui.storage.FileMode
 import me.proxui.structure.chiccenAPI
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
 
-private val dataCollection by lazy { chiccenAPI.database.getCollection("economy") }
+private val economy by lazy { chiccenAPI.database.getCollection("economy", FileMode.DYNAMIC) }
 var OfflinePlayer.balance: Int
     get() {
-        dataCollection.reload()
-        return dataCollection.getInteger(this.uniqueId.toString())
+        return economy[this.uniqueId.toString()]
     }
     set(value) {
         val event = PlayerBalanceUpdateEvent(this, value)
         Bukkit.getPluginManager().callEvent(event)
         if (event.isCancelled) return
 
-        dataCollection.let {
-            it[uniqueId.toString()] = event.newBalance
-            it.save()
-        }
+        economy[uniqueId.toString()] = event.newBalance
     }

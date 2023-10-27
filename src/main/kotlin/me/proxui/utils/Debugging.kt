@@ -1,6 +1,7 @@
 package me.proxui.utils
 
 import me.proxui.extensions.setContains
+import me.proxui.storage.FileMode
 import me.proxui.structure.chiccenAPI
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -8,17 +9,17 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.logging.Logger
 
-private val collection = chiccenAPI.database.getCollection("debugging")
+private val collection = chiccenAPI.database.getCollection("debugging", FileMode.SAVE_ON_STOP)
 
-val debuggingPlayers: MutableList<UUID>?; get() = collection.getList("uuids", UUID::class.java)
+val debuggingPlayers: MutableSet<UUID>; get() = collection["uuids"] ?: mutableSetOf()
 
 var Player.isDebugging: Boolean
     get() {
         collection.reload()
-        return (debuggingPlayers ?: return false).contains(this.uniqueId)
+        return debuggingPlayers.contains(this.uniqueId)
     }
     set(value) {
-        (debuggingPlayers ?: return).setContains(this.uniqueId, value)
+        debuggingPlayers.setContains(this.uniqueId, value)
         collection.save()
     }
 
@@ -28,7 +29,7 @@ fun Logger.debug(message: String) {
 
     @Suppress("DEPRECATION")
     this.info(ChatColor.stripColor(msg))
-    (debuggingPlayers ?: return).forEach {
+    debuggingPlayers.forEach {
         (Bukkit.getPlayer(it) ?: return@forEach).sendMessage("§8§l[Debug]§r§7 $msg")
     }
 }
@@ -36,7 +37,7 @@ fun Logger.debug(message: String) {
 /**
  * @param id the id of the test
  * @param expected the expected output
- * @param output the action that should return [expected]
+ * @param output the action that returns [expected].. or not
  */
 fun <T> test(id: Int, expected: T, output: () -> T) {
     val out = output()

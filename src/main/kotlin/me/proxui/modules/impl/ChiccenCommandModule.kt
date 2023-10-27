@@ -1,16 +1,16 @@
-package me.proxui.features.impl
+package me.proxui.modules.impl
 
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.proxui.extensions.p
 import me.proxui.extensions.playerExtensions.balance
-import me.proxui.features.Feature
+import me.proxui.modules.workaround.Module
 import me.proxui.structure.chiccenAPI
 import me.proxui.utils.isDebugging
 import net.axay.kspigot.commands.*
 import net.minecraft.commands.arguments.EntityArgument
 
-object ChiccenCommandFeature : Feature(chiccenAPI,"ChiccenCommand") {
+object ChiccenCommandModule : Module(chiccenAPI, "ChiccenCommand") {
     override fun onInitialization() {
         command("chiccen") {
 
@@ -22,55 +22,18 @@ object ChiccenCommandFeature : Feature(chiccenAPI,"ChiccenCommand") {
                 requiresPermission("chiccenapi.command.chiccen.debug")
                 argument("state", BoolArgumentType.bool()) {
                     runs {
-                        try {
-                            val newState = BoolArgumentType.getBool(nmsContext, "state")
-                            p.isDebugging = newState
-                            p.sendMessage("Debugging state has been updated")
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
+                        val newState = BoolArgumentType.getBool(nmsContext, "state")
+                        p.isDebugging = newState
+                        p.sendMessage("Debugging state has been updated")
                     }
                 }
                 runs {
-                    try {
-                        p.isDebugging
-                        p.sendMessage("You are currently " + (if (p.isDebugging) "" else "not ") + "debugging")
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
+                    p.sendMessage("Debugging mode is currently " + (if (p.isDebugging) "" else "not ") + "enabled for you")
                 }
             }
 
             literal("test") {
                 requiresPermission("chiccenapi.command.chiccen.test")
-
-                literal("database") {
-                    literal("set") {
-                        argument("value", IntegerArgumentType.integer()) {
-                            argument("save", BoolArgumentType.bool()) {
-                                runs {
-                                    chiccenAPI.database.getCollection("bitches").also {
-                                        it["amount"] = IntegerArgumentType.getInteger(this.nmsContext, "value")
-                                        if (BoolArgumentType.getBool(this.nmsContext, "save")) {
-                                            it.save()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    literal("getValue") {
-                        runs {
-                            argument("reload", BoolArgumentType.bool())
-                            chiccenAPI.database.getCollection("bitches").also {
-                                if (BoolArgumentType.getBool(this.nmsContext, "reload")) {
-                                    it.reload()
-                                }
-                                p.sendMessage("Amount of bitches: " + it["amount"])
-                            }
-                        }
-                    }
-                }
 
                 literal("eco") {
                     argument("player", EntityArgument.player()) {

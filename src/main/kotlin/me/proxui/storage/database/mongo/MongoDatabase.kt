@@ -1,16 +1,17 @@
 package me.proxui.storage.database.mongo
 
+import com.mongodb.BasicDBObject
 import com.mongodb.ConnectionString
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
+import me.proxui.storage.FileMode
 import me.proxui.storage.Storage
 import me.proxui.storage.datafile.Datafile
 import me.proxui.structure.Configurations
 import me.proxui.utils.logger
-import net.axay.kspigot.event.listen
 import org.bson.Document
-import org.bukkit.event.server.PluginDisableEvent
+import org.bukkit.plugin.Plugin
 
 open class MongoDatabase(private val configs: Configurations, val name: String) : IMongoDatabase {
 
@@ -27,37 +28,28 @@ open class MongoDatabase(private val configs: Configurations, val name: String) 
         } catch (e: IllegalArgumentException) {
             throw IllegalArgumentException("Name is invalid")
         }
-
-        listen<PluginDisableEvent> { e ->
-            if(e.plugin != configs.plugin) return@listen
-            this.collections.forEach {
-                it.save()
-            }
-        }
     }
 
-    override fun getCollection(name: String): Storage {
-        if(configs.saveLocally) return Datafile(configs.plugin, this.name + "." + name)
+    override fun getCollection(name: String, fileMode: FileMode): Storage {
+        if (configs.saveLocally) return Datafile(configs.plugin, this.name + "." + name, fileMode)
 
-        if(!database.listCollectionNames().contains(name)) database.createCollection(name)
+        if (!database.listCollectionNames().contains(name)) database.createCollection(name)
         val collection = database.getCollection(name)
-        return MongoCollection(collection).also { collections.add(it) }
+        return MongoCollection(configs.plugin, collection, fileMode).also { collections.add(it) }
     }
 
     override fun close() = this.connection.close()
 }
 
-open class MongoCollection(private val collection: com.mongodb.client.MongoCollection<Document>) : Storage(Document()){
-
-    init {
-        reload()
-    }
+open class MongoCollection(plugin: Plugin, private val collection: com.mongodb.client.MongoCollection<Document>, fileMode: FileMode) : Storage(plugin, fileMode) {
 
     override fun save() {
-        collection.insertOne(Document(this))
+        collection.deleteMany(BasicDBObject())
+        collection.insertOne(Document(this.toMap()))
     }
 
     final override fun reload() {
+        super.clear()
         super.putAll(collection.find().first() ?: Document())
     }
 }
